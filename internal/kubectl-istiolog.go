@@ -254,7 +254,7 @@ func (opts *options) streamLogs(podName string, containerName string) error {
 	return nil
 }
 
-func (options *options) KubectlIstioLog(pod string, logLevel string, follow bool) error {
+func (options *options) KubectlIstioLog(pod string, logLevel string, follow bool, label string) error {
 	err := options.isPodExists(pod)
 	if err != nil {
 		return err

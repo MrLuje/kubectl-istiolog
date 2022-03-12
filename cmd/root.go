@@ -17,21 +17,22 @@ import (
 	"fmt"
 	"os"
 
-	internal "github.com/TejaBeta/kubectl-istiolog/internal"
+	"github.com/TejaBeta/kubectl-istiolog/internal"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 var (
-	flagVerbose   bool
-	flagNameSpace string
-	flagFollow    bool
-	flagLogLevel  string
+	flagVerbose       bool
+	flagNameSpace     string
+	flagFollow        bool
+	flagLogLevel      string
+	flaglabelSelector string
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Args:  cobra.MinimumNArgs(1),
+	Args:  cobra.MinimumNArgs(0),
 	Use:   "kubectl-istiolog [pod] [flags]",
 	Short: "A Kubectl plugin to manage and set envoy log levels",
 
@@ -44,7 +45,12 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-		err = options.KubectlIstioLog(args[0], flagLogLevel, flagFollow)
+
+		if len(args) < 1 {
+			args = append(args, "")
+		}
+
+		err = options.KubectlIstioLog(args[0], flagLogLevel, flagFollow, flaglabelSelector)
 		if err != nil {
 			panic(err)
 		}
@@ -66,8 +72,9 @@ func init() {
 			log.SetLevel(log.WarnLevel)
 		}
 	})
-	rootCmd.Flags().BoolVar(&flagVerbose, "verbose", false, "Verbose mode on")
+	rootCmd.Flags().BoolVar(&flagVerbose, "verbose", true, "Verbose mode on")
 	rootCmd.Flags().StringVarP(&flagNameSpace, "namespace", "n", "default", "Namespace in current context")
 	rootCmd.Flags().BoolVarP(&flagFollow, "follow", "f", false, "Specify if the logs should be streamed")
 	rootCmd.Flags().StringVarP(&flagLogLevel, "level", "l", "warning", "Comma-separated minimum per-logger level of messages to output")
+	rootCmd.Flags().StringVarP(&flaglabelSelector, "label", "", "", "Specify the pod labels")
 }
