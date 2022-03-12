@@ -255,34 +255,35 @@ func (opts *options) streamLogs(podName string, containerName string) error {
 }
 
 func (options *options) KubectlIstioLog(pod string, logLevel string, follow bool, label string) error {
-	err := options.isPodExists(pod)
-	if err != nil {
-		return err
-	}
-
-	err = handleLog(logLevel, pod, options.namespace)
-	if err != nil {
-		return err
-	}
-
-	if follow {
-		c := make(chan os.Signal)
-		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-
-		go func() {
-			<-c
-			err := handleLog(levelToString[defaultOutputLevel], pod, options.namespace)
-			if err != nil {
-				fmt.Print(err)
-			}
-			os.Exit(0)
-		}()
-
-		err := options.streamLogs(pod, istioContainer)
+	if pod != "" {
+		err := options.isPodExists(pod)
 		if err != nil {
 			return err
 		}
-	}
 
+		err = handleLog(logLevel, pod, options.namespace)
+		if err != nil {
+			return err
+		}
+
+		if follow {
+			c := make(chan os.Signal)
+			signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+
+			go func() {
+				<-c
+				err := handleLog(levelToString[defaultOutputLevel], pod, options.namespace)
+				if err != nil {
+					fmt.Print(err)
+				}
+				os.Exit(0)
+			}()
+
+			err := options.streamLogs(pod, istioContainer)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
