@@ -75,7 +75,7 @@ func TestIstioLogGetPod_A001(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	err = options.KubectlIstioLog("unit-test-pod1", "debug", false)
+	err = options.KubectlIstioLog("unit-test-pod1", "debug", false, "")
 	if err == nil {
 		t.Errorf("Error during reterving pod that doesn't exist")
 	}
@@ -109,7 +109,7 @@ func TestIstioLoggerName_A001(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	err = options.KubectlIstioLog("unit-test-pod", "hello", false)
+	err = options.KubectlIstioLog("unit-test-pod", "hello", false, "")
 	if err == nil {
 		t.Errorf("Error while using illegal loggerName")
 	}
@@ -129,7 +129,7 @@ func TestIstioLoggerLevel_A001(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	err = options.KubectlIstioLog("unit-test-pod", "debug:hello", false)
+	err = options.KubectlIstioLog("unit-test-pod", "debug:hello", false, "")
 	if err == nil {
 		t.Errorf("Error while using illegal loggerLevel")
 	}
