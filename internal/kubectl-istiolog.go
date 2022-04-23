@@ -19,10 +19,8 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/signal"
 	"regexp"
 	"strings"
-	"syscall"
 
 	"istio.io/istio/pkg/kube"
 	corev1 "k8s.io/api/core/v1"
@@ -267,7 +265,7 @@ func (options *options) KubectlIstioLog(pod string, logLevel string, follow bool
 
 	if follow {
 		c := make(chan os.Signal)
-		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+		// signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
 		go func() {
 			<-c
